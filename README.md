@@ -1,56 +1,84 @@
-# Allay Java Plugin Template
+# 💰 Aconomy
 
-Welcome to the java plugin template for allay.
+A simple and flexible economy plugin for [AllayMC](https://github.com/AllayMC/Allay) that implements the [EconomyAPI](https://github.com/AllayMC/EconomyAPI).
 
-## Prerequisites
+## ✨ Features
 
-- Java21 or higher.
-- Allay installed.
+- 🔌 Full implementation of EconomyAPI interfaces
+- 💾 Multiple storage backends (JSON, SQLite, H2)
+- 💵 Configurable currency (name, symbol, decimal places)
 
-## Getting Started
+## 📋 Requirements
 
-1. **Clone this Repository**
+- Java 21 or higher
+- AllayMC server
+- [EconomyAPI](https://github.com/AllayMC/EconomyAPI) plugin installed
 
-```bash
-git clone https://github.com/AllayMC/JavaPluginTemplate.git
+## 📥 Installation
+
+1. Download the latest release from the [Releases](https://github.com/smartcmd/Aconomy/releases) page
+2. Place the jar file in your server's `plugins` folder
+3. Start the server
+4. Configure the plugin in `plugins/Aconomy/config.yml`
+
+## ⚙️ Configuration
+
+```yaml
+# Storage Configuration
+storage:
+  # Storage type: json, sqlite, or h2
+  # json - Uses local JSON file (accounts.json)
+  # sqlite - Uses SQLite database (economy.db)
+  # h2 - Uses H2 database (economy.mv.db)
+  type: json
+
+# Currency Configuration
+currency:
+  # The name of the currency (singular form)
+  name: Coin
+  # The plural form of the currency name
+  plural: Coins
+  # The symbol displayed before amounts
+  symbol: "$"
+  # Number of decimal places to display
+  fraction_digits: 2
+
+# Economy Settings
+economy:
+  # Default balance for new accounts
+  default_balance: 0.0
 ```
-   
-2. **Navigate to the Cloned Directory**
 
-```bash
-cd JavaPluginTemplate
-```
-   
-3. **Change Plugin Information**
+## 📜 Commands
 
-- Rename package name from `org.allaymc.javaplugintemplate` to `your.group.name.and.pluginname`
-- Update [build.gradle.kts](build.gradle.kts) and [settings.gradle.kts](settings.gradle.kts)
-- Reload gradle
-   
-4. **Build and Run Your Plugin**
+All commands use `/aconomy` (alias: `/aco`)
 
-```bash
-gradlew shadowJar
-```
-   
-This command will produce a `.jar` file in the `build/libs` directory. 
-Copy the `.jar` file to the `plugins` directory of your allay server.
-Start the allay server and check the logs to ensure your plugin loads and operates
-as expected.
+| Command                           | Description                      | Permission                 |
+|-----------------------------------|----------------------------------|----------------------------|
+| `/aco balance [player]`           | Check balance                    | `aconomy.command.balance`  |
+| `/aco transfer <amount> <player>` | Transfer money to another player | `aconomy.command.transfer` |
+| `/aco top [count]`                | Show richest players             | `aconomy.command.top`      |
+| `/aco set <amount> [player]`      | Set player's balance             | `aconomy.command.set`      |
+| `/aco deposit <amount> [player]`  | Add money to account             | `aconomy.command.deposit`  |
+| `/aco withdraw <amount> [player]` | Remove money from account        | `aconomy.command.withdraw` |
 
-5. **Test Your Plugin in Gradle**
+### 🔐 Permissions
 
-```bash
-gradlew runServer
-```
+| Permission                 | Description             | Default  |
+|----------------------------|-------------------------|----------|
+| `aconomy.command`          | Base command permission | Everyone |
+| `aconomy.command.balance`  | Check balance           | Everyone |
+| `aconomy.command.transfer` | Transfer money          | Everyone |
+| `aconomy.command.top`      | View leaderboard        | Everyone |
+| `aconomy.command.set`      | Set balance (admin)     | OP only  |
+| `aconomy.command.deposit`  | Deposit money (admin)   | OP only  |
+| `aconomy.command.withdraw` | Withdraw money (admin)  | OP only  |
 
-This command will start an allay server with your plugin loaded.
-Then close allay server by clicking `X` in the dashboard window.
+## 📄 License
 
-## Documentation
+This project is licensed under the LGPL-3.0 License - see the [LICENSE](LICENSE) file for details.
 
-For a deeper dive into the Allay API and its functionalities, please refer to our [documentation](https://docs.allaymc.org) (WIP).
+## 🙏 Credits
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- [AllayMC](https://github.com/AllayMC/Allay) - The Minecraft Bedrock server software
+- [EconomyAPI](https://github.com/AllayMC/EconomyAPI) - The economy API interface

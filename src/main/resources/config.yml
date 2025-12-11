@@ -1,0 +1,26 @@
+# Aconomy Configuration
+# A simple economy plugin for AllayMC
+
+# Storage Configuration
+storage:
+  # Storage type: json, sqlite, or h2
+  # json - Uses local JSON file (accounts.json)
+  # sqlite - Uses SQLite database (economy.db)
+  # h2 - Uses H2 database (economy.mv.db)
+  type: json
+
+# Currency Configuration
+currency:
+  # The name of the currency (singular form)
+  name: Coin
+  # The plural form of the currency name
+  plural: Coins
+  # The symbol displayed before amounts
+  symbol: "$"
+  # Number of decimal places to display
+  fraction_digits: 2
+
+# Economy Settings
+economy:
+  # Default balance for new accounts
+  default_balance: 0.0

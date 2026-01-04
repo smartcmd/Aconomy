@@ -13,10 +13,8 @@ public interface EconomyStorage {
 
     /**
      * Initialize the storage system.
-     *
-     * @return true if initialization was successful
      */
-    boolean init();
+    void init();
 
     /**
      * Shutdown the storage system and release resources.

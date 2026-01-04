@@ -3,6 +3,7 @@ package me.daoge.aconomy.storage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -33,28 +34,23 @@ public class JsonStorage implements EconomyStorage {
         this.dataFile = dataFolder.resolve(DATA_FILE_NAME);
     }
 
+    @SneakyThrows
     @Override
-    public boolean init() {
-        try {
-            Files.createDirectories(dataFile.getParent());
-            if (!Files.exists(dataFile)) {
-                save();
-                return true;
-            }
-            String content = Files.readString(dataFile);
-            if (content.isBlank()) {
-                return true;
-            }
-            List<AccountData> loaded = gson.fromJson(content, ACCOUNT_LIST_TYPE);
-            if (loaded != null) {
-                loaded.forEach(account -> accounts.put(account.uuid, account));
-            }
-            log.info("Loaded {} accounts from JSON storage", accounts.size());
-            return true;
-        } catch (IOException e) {
-            log.error("Failed to initialize JSON storage", e);
-            return false;
+    public void init() {
+        Files.createDirectories(dataFile.getParent());
+        if (!Files.exists(dataFile)) {
+            save();
+            return;
         }
+        String content = Files.readString(dataFile);
+        if (content.isBlank()) {
+            return;
+        }
+        List<AccountData> loaded = gson.fromJson(content, ACCOUNT_LIST_TYPE);
+        if (loaded != null) {
+            loaded.forEach(account -> accounts.put(account.uuid, account));
+        }
+        log.info("Loaded {} accounts from JSON storage", accounts.size());
     }
 
     @Override

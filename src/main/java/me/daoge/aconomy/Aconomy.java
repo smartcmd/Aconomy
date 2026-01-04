@@ -1,6 +1,7 @@
 package me.daoge.aconomy;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 import me.daoge.aconomy.api.AcoCurrency;
 import me.daoge.aconomy.api.AcoEconomyAPI;
 import me.daoge.aconomy.command.AcoCommand;
@@ -11,6 +12,7 @@ import me.daoge.aconomy.storage.SqliteStorage;
 import org.allaymc.api.eventbus.EventBus;
 import org.allaymc.api.eventbus.EventHandler;
 import org.allaymc.api.plugin.Plugin;
+import org.allaymc.api.plugin.PluginException;
 import org.allaymc.api.registry.Registries;
 import org.allaymc.api.server.Server;
 import org.allaymc.api.eventbus.event.server.PlayerJoinEvent;
@@ -18,11 +20,11 @@ import org.allaymc.api.utils.config.Config;
 import org.allaymc.api.utils.config.ConfigSection;
 import org.allaymc.economyapi.EconomyAPI;
 
-import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 
 /**
  * Aconomy - A simple economy plugin for AllayMC that implements EconomyAPI.
@@ -46,14 +48,8 @@ public class Aconomy extends Plugin {
         instance = this;
         this.pluginLogger.info("Aconomy is loading...");
         loadConfig();
-    }
-
-    @Override
-    public void onEnable() {
-        this.pluginLogger.info("Aconomy is enabling...");
-
         // Initialize storage based on config
-        String storageType = config.getString("storage.type", "json").toLowerCase();
+        String storageType = config.getString("storage.type", "json").toLowerCase(Locale.ROOT);
         Path dataFolder = this.pluginContainer.dataFolder();
 
         switch (storageType) {
@@ -70,11 +66,7 @@ public class Aconomy extends Plugin {
                 this.pluginLogger.info("Using JSON storage");
             }
         }
-
-        if (!storage.init()) {
-            this.pluginLogger.error("Failed to initialize storage! Plugin will be disabled.");
-            return;
-        }
+        storage.init();
 
         // Load currency configuration
         ConfigSection currencySection = config.getSection("currency");
@@ -94,6 +86,12 @@ public class Aconomy extends Plugin {
         EconomyAPI.API.set(economyAPI);
 
         this.pluginLogger.info("EconomyAPI implementation registered successfully!");
+        this.pluginLogger.info("Aconomy loaded successfully!");
+    }
+
+    @Override
+    public void onEnable() {
+        this.pluginLogger.info("Aconomy is enabling...");
 
         // Register commands
         Registries.COMMANDS.register(new AcoCommand());
@@ -121,36 +119,31 @@ public class Aconomy extends Plugin {
             storage.shutdown();
         }
 
-        this.pluginLogger.info("Aconomy disabled!");
+        this.pluginLogger.info("Aconomy disabled successfully!");
     }
 
     /**
      * Load configuration from config.yml.
      * If config file doesn't exist, it will be created with default values from resources.
      */
+    @SneakyThrows
     private void loadConfig() {
-        try {
-            var configFile = this.pluginContainer.dataFolder().resolve("config.yml");
+        var configFile = this.pluginContainer.dataFolder().resolve("config.yml");
 
-            // If config file doesn't exist, create it from resources first (to preserve comments)
-            if (!Files.exists(configFile)) {
-                try (InputStream defaultConfigStream = this.getClass().getResourceAsStream("/config.yml")) {
-                    if (defaultConfigStream != null) {
-                        Files.copy(defaultConfigStream, configFile);
-                        this.pluginLogger.info("Created default config.yml");
-                    }
-                } catch (Exception e) {
-                    this.pluginLogger.warn("Could not copy default config from resources", e);
+        // If config file doesn't exist, create it from resources first (to preserve comments)
+        if (!Files.exists(configFile)) {
+            try (InputStream defaultConfigStream = this.getClass().getResourceAsStream("/config.yml")) {
+                if (defaultConfigStream != null) {
+                    Files.copy(defaultConfigStream, configFile);
+                    this.pluginLogger.info("Created default config.yml");
                 }
             }
-
-            // Load config
-            config = new Config(configFile.toFile(), Config.YAML);
-
-            this.pluginLogger.info("Configuration loaded successfully!");
-        } catch (Exception e) {
-            this.pluginLogger.error("Failed to load configuration!", e);
         }
+
+        // Load config
+        config = new Config(configFile.toFile(), Config.YAML);
+
+        this.pluginLogger.info("Configuration loaded successfully!");
     }
 
     /**

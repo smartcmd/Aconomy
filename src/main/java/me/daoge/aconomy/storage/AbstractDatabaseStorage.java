@@ -1,5 +1,6 @@
 package me.daoge.aconomy.storage;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -43,23 +44,18 @@ public abstract class AbstractDatabaseStorage implements EconomyStorage {
      */
     protected abstract String getCreateTableSql();
 
+    @SneakyThrows
     @Override
-    public boolean init() {
-        try {
-            // Load JDBC driver
-            Class.forName(getDriverClassName());
+    public void init() {
+        // Load JDBC driver
+        Class.forName(getDriverClassName());
 
-            Files.createDirectories(dataFolder);
-            connection = DriverManager.getConnection(getJdbcUrl());
-            try (Statement stmt = connection.createStatement()) {
-                stmt.execute(getCreateTableSql());
-            }
-            log.info("{} storage initialized successfully", getDatabaseName());
-            return true;
-        } catch (Exception e) {
-            log.error("Failed to initialize {} storage", getDatabaseName(), e);
-            return false;
+        Files.createDirectories(dataFolder);
+        connection = DriverManager.getConnection(getJdbcUrl());
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(getCreateTableSql());
         }
+        log.info("{} storage initialized successfully", getDatabaseName());
     }
 
     @Override

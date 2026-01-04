@@ -6,7 +6,7 @@ plugins {
 
 group = "me.daoge.aconomy"
 description = "Aconomy is an simple implementation of https://github.com/AllayMC/EconomyAPI"
-version = "0.1.0"
+version = "0.1.1-SNAPSHOT"
 
 java {
     toolchain {
@@ -15,7 +15,7 @@ java {
 }
 
 allay {
-    api = "0.18.0"
+    api = "0.19.0"
 
     plugin {
         entrance = ".Aconomy"
